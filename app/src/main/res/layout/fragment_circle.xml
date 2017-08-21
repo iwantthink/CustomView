@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+    >
 
-    <com.ryan.customview.view.FakeSearchView
+    <com.ryan.customview.view.ZoomImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:scaleType="matrix"
+        android:src="@mipmap/ic_launcher"
+        />
 
 </RelativeLayout>

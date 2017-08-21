@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         //只用在这里更改就可以
         mModels.add(new PageModel(R.layout.fragment_radar, R.string.title_radar));
         mModels.add(new PageModel(R.layout.fragment_circle, R.string.title_circle));
+        mModels.add(new PageModel(R.layout.fragment_search, R.string.title_search));
     }
 
     @Override
