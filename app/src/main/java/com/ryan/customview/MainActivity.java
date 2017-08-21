@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mTlTitle.setupWithViewPager(mVpContent, true);
-        mTlTitle.getTabAt(1).select();
+        mTlTitle.getTabAt(0).select();
 
     }
 
