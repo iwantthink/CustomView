@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         mModels.add(new PageModel(R.layout.fragment_radar, R.string.title_radar));
         mModels.add(new PageModel(R.layout.fragment_circle, R.string.title_circle));
         mModels.add(new PageModel(R.layout.fragment_search, R.string.title_search));
+        mModels.add(new PageModel(R.layout.fragment_test, R.string.title_test));
     }
 
     @Override
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mTlTitle.setupWithViewPager(mVpContent, true);
-        mTlTitle.getTabAt(0).select();
+        mTlTitle.getTabAt(3).select();
 
     }
 
