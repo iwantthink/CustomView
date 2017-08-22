@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 
 /**
  * Created by renbo on 2017/8/21.
@@ -27,10 +28,13 @@ public class RadarView extends BaseView {
     private String[] mArray = new String[]{"a", "b", "c", "d", "e", "f"};
     private float mBorderLth;
     private float mGap = 50.0f;
+    private float mMaxGap = 0f;
     private int CIRCLE_COUNT = 5;
-    private Model mModel;
+    private int[] mModel = null;
+    private Paint mRegionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public void init() {
+        Log.d("RadarView", "init");
         mPaint.setStyle(Paint.Style.STROKE);
         float temp = 0;
 
@@ -45,39 +49,49 @@ public class RadarView extends BaseView {
             mRadarPath.lineTo(-mBorderLth / 2, temp);
             mRadarPath.lineTo(-mBorderLth, 0);
             mRadarPath.close();
+            mMaxGap = temp;
         }
 
-        mModel = new Model(65, 99, 23, 4, 56, 77);
+        mModel = new int[]{65, 99, 23, 4, 56, 77};
+        mRegionPaint.setStyle(Paint.Style.FILL);
+        mRegionPaint.setAlpha(155);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        Log.d("RadarView", "onDraw");
         drawAuxiliary(canvas);
         canvas.save();
         canvas.translate(mWidth / 2, mHeight / 2);
         canvas.drawPath(mRadarPath, mPaint);
-
         drawRadarPath(canvas);
         drawRegion(canvas);
-
         canvas.restore();
     }
 
+
     private void drawRegion(Canvas canvas) {
         mRadarPath.reset();
-        float percent = mModel.mA / 100;
+        canvas.save();
+
         for (int i = 0; i < 6; i++) {
-            float x = (float) (mBorderLth * Math.cos(30) * percent);
-            float y = (float) (mBorderLth * Math.sin(30) * percent);
-            canvas.drawCircle(x, y, 10, mPaint);
+            float percent = mModel[i] / 100f;
+            Log.d("RadarView", "mModel[i]:" + mModel[i]);
+            Log.d("RadarView", "percent:" + percent);
+            float x = (float) (mBorderLth * percent * Math.cos(i * Math.toRadians(60)));
+            float y = (float) (mBorderLth * percent * Math.sin(i * Math.toRadians(60)));
+            canvas.drawCircle(x, y, 5, mPaint);
+            canvas.drawText("" + i, x, y, mPaint);
             if (i == 0) {
                 mRadarPath.moveTo(x, y);
             } else {
                 mRadarPath.lineTo(x, y);
             }
         }
-        canvas.drawPath(mRadarPath, mPaint);
+        mRadarPath.close();
+        canvas.drawPath(mRadarPath, mRegionPaint);
+        canvas.restore();
     }
 
     private void drawRadarPath(Canvas canvas) {
@@ -94,21 +108,4 @@ public class RadarView extends BaseView {
         canvas.rotate(30);
     }
 
-    class Model {
-        float mA = 0;
-        float mB = 0;
-        float mC = 0;
-        float mD = 0;
-        float mE = 0;
-        float mF = 0;
-
-        public Model(float a, float b, float c, float d, float e, float f) {
-            mA = a;
-            mB = b;
-            mC = c;
-            mD = d;
-            mE = e;
-            mF = f;
-        }
-    }
 }
