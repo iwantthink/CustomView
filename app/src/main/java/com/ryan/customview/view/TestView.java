@@ -1,23 +1,18 @@
 package com.ryan.customview.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
-import android.text.TextPaint;
 import android.util.AttributeSet;
-
-import com.ryan.customview.R;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Scroller;
 
 /**
  * Created by renbo on 2017/8/22.
  */
 
-public class TestView extends BaseView {
+public class TestView extends BaseView implements View.OnClickListener {
 
 
     public TestView(Context context) {
@@ -26,53 +21,64 @@ public class TestView extends BaseView {
 
     public TestView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        mScroller = new Scroller(context);
+        init(context);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.AT_MOST &&
+                MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(100, 100);
+        } else if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(100, MeasureSpec.getSize(heightMeasureSpec));
+        } else if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), 100);
+        }
     }
 
     private Path mPath = new Path();
-    private Paint.FontMetrics mFontMetrics;
-    private Rect mRect = new Rect();
 
-    private void init() {
-        mTextPaint.setTextSize(50);
-        mTextPaint.setFakeBoldText(true);
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
-        mFontMetrics = mTextPaint.getFontMetrics();
-        mTextPaint.getTextBounds(mStr, 0, mStr.length(), mRect);
-        mPaint.setStyle(Paint.Style.STROKE);
 
+    private void init(Context context) {
+        setOnClickListener(this);
+        mScroller = new Scroller(context);
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
 //        setLayerType(LAYER_TYPE_SOFTWARE, null);
-        initBitmapAndMatrix();
     }
 
-    private TextPaint mTextPaint = new TextPaint();
-    private String mStr = "dgh达芙妮";
-    Matrix mPolyMatrix = new Matrix();
-    Bitmap mBitmap;
+    private float mX;
+    private float mY;
+    private Scroller mScroller;
 
-    private void initBitmapAndMatrix() {
-        mBitmap = BitmapFactory.decodeResource(getResources(),
-                R.mipmap.ic_launcher);
+    private void smoothScrollTo(int destX, int destY) {
+        int scrollX = getScrollX();
+        int delta = destX - scrollX;
+        int scrollY = getScrollY();
+        int deltaY = destY - scrollY;
+        //1000ms内平滑的滑向destX,
+        mScroller.startScroll(scrollX, scrollY, delta, deltaY, 1000);
+        invalidate();
+    }
 
-        mPolyMatrix = new Matrix();
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+        if (mScroller.computeScrollOffset()) {
+            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+            postInvalidate();
+        }
+    }
 
-
-        float[] src = {0, 0,                                    // 左上
-                mBitmap.getWidth(), 0,                          // 右上
-                mBitmap.getWidth(), mBitmap.getHeight(),        // 右下
-                0, mBitmap.getHeight()};                        // 左下
-
-        float[] dst = {-50, -50,                                    // 左上
-                mBitmap.getWidth(), 0,                        // 右上
-                mBitmap.getWidth(), mBitmap.getHeight(),  // 右下
-                0, mBitmap.getHeight()};                        // 左下
-
-        // 核心要点
-        mPolyMatrix.setPolyToPoly(src, 0, dst, 0, 1); // src.length >> 1 为位移运算 相当于处以2
-
-        // 此处为了更好的显示对图片进行了等比缩放和平移(图片本身有点大)
-//        mPolyMatrix.postScale(0.26f, 0.26f);
-//        mPolyMatrix.postTranslate(0, 200);
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -80,12 +86,15 @@ public class TestView extends BaseView {
         super.onDraw(canvas);
 
         drawAuxiliary(canvas);
-
         canvas.save();
         canvas.translate(mWidth / 2, mHeight / 2);
-        canvas.drawBitmap(mBitmap, mPolyMatrix, null);
+        canvas.drawCircle(0, 0, 50, mPaint);
         canvas.restore();
     }
 
 
+    @Override
+    public void onClick(View v) {
+
+    }
 }
