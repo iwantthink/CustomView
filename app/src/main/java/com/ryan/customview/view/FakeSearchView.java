@@ -79,7 +79,8 @@ public class FakeSearchView extends View implements View.OnClickListener {
             case NONE:
                 drawSearch(canvas);
                 if (mAnimator != null) {
-                    mAnimator.end();
+//                    mAnimator.end();
+                    mAnimator.cancel();
                     mCurrentSearchingCount = 1;
                 }
                 break;

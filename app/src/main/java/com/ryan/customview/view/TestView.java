@@ -2,17 +2,19 @@ package com.ryan.customview.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Path;
+import android.graphics.RectF;
+import android.graphics.Region;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Scroller;
 
 /**
  * Created by renbo on 2017/8/22.
  */
 
-public class TestView extends BaseView implements View.OnClickListener {
+public class TestView extends BaseView {
 
 
     public TestView(Context context) {
@@ -21,7 +23,6 @@ public class TestView extends BaseView implements View.OnClickListener {
 
     public TestView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mScroller = new Scroller(context);
         init(context);
     }
 
@@ -39,47 +40,66 @@ public class TestView extends BaseView implements View.OnClickListener {
     }
 
     private Path mPath = new Path();
-
+    private Region mRegion = new Region();
+    private Region gloabalRegion = new Region();
 
     private void init(Context context) {
-        setOnClickListener(this);
-        mScroller = new Scroller(context);
-        setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
-//        setLayerType(LAYER_TYPE_SOFTWARE, null);
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
+
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mPath.addCircle(w / 2, h / 2, 500, Path.Direction.CW);
+        Log.d("TestView", "w:" + w);
+        Log.d("TestView", "h:" + h);
+        RectF rectF = new RectF();
+        mPath.computeBounds(rectF, true);
+        gloabalRegion = new Region(0, 0,
+                w, h);
+        mRegion.setPath(mPath, gloabalRegion);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+
+
+        return super.dispatchTouchEvent(event);
     }
 
     private float mX;
     private float mY;
-    private Scroller mScroller;
-
-    private void smoothScrollTo(int destX, int destY) {
-        int scrollX = getScrollX();
-        int delta = destX - scrollX;
-        int scrollY = getScrollY();
-        int deltaY = destY - scrollY;
-        //1000ms内平滑的滑向destX,
-        mScroller.startScroll(scrollX, scrollY, delta, deltaY, 1000);
-        invalidate();
-    }
-
-    @Override
-    public void computeScroll() {
-        super.computeScroll();
-        if (mScroller.computeScrollOffset()) {
-            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
-            postInvalidate();
-        }
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        mX = event.getX();
+        mY = event.getY();
+        invalidate();
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+//                Log.d("TestView", "mRegion.contains(x,y):" +
+//                        mRegion.contains((int) mX, (int) mY));
+                Log.d("TestView", "actionDown");
+                break;
+            case MotionEvent.ACTION_MOVE:
+//                Log.d("TestView", "actionMove");
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.d("TestView", "actionUp");
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                Log.d("TestView", "actionPointerDown");
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                Log.d("TestView", "actionPointerUp");
+                break;
+        }
+
+
         return super.onTouchEvent(event);
     }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -88,13 +108,13 @@ public class TestView extends BaseView implements View.OnClickListener {
         drawAuxiliary(canvas);
         canvas.save();
         canvas.translate(mWidth / 2, mHeight / 2);
-        canvas.drawCircle(0, 0, 50, mPaint);
+        Matrix matrix = new Matrix();
+        canvas.getMatrix().invert(matrix);
+        float[] arrary = new float[]{mX, mY};
+        matrix.mapPoints(arrary);
+        canvas.drawCircle(arrary[0], arrary[1], 10, mPaint);
         canvas.restore();
     }
 
 
-    @Override
-    public void onClick(View v) {
-
-    }
 }

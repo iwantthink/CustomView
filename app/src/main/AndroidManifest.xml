@@ -8,7 +8,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+
+        <meta-data
+            android:name="HMT_CHANGEL"
+            android:value="11111"
+            ></meta-data>
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             >
             <intent-filter>
