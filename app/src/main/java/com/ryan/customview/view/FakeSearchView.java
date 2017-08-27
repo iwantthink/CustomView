@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -64,8 +65,10 @@ public class FakeSearchView extends View implements View.OnClickListener {
     private Path mDst = new Path();
 
     private void initPath() {
-        mCirclePath.addArc(-75, -75, 75, 75, 45, 359.9f);
-        mSearchPath.addArc(-30, -30, 30, 30, 45, 359.9f);
+        RectF rectF = new RectF(-75, -75, 75, 75);
+        mCirclePath.addArc(rectF, 45, 359.9f);
+        rectF = new RectF(-30, -30, 30, 30);
+        mSearchPath.addArc(rectF, 45, 359.9f);
         mPathMeasure.setPath(mCirclePath, false);
         mPathMeasure.getPosTan(0, mPos, mTan);
         mSearchPath.lineTo(mPos[0], mPos[1]);

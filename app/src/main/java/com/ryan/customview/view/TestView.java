@@ -75,6 +75,12 @@ public class TestView extends BaseView {
     public boolean onTouchEvent(MotionEvent event) {
         mX = event.getX();
         mY = event.getY();
+
+        Log.d("TestView", "event.getX():" + event.getX());
+        Log.d("TestView", "event.getRawX():" + event.getRawX());
+        Log.d("TestView", "event.getY():" + event.getY());
+        Log.d("TestView", "event.getRawY():" + event.getRawY());
+
         invalidate();
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
