@@ -104,7 +104,7 @@ public class RemoteControlView extends BaseView {
     public boolean onTouchEvent(MotionEvent event) {
         int x = (int) event.getX();
         int y = (int) event.getY();
-
+        
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (mRegion_top.contains(x, y)) {
@@ -123,6 +123,9 @@ public class RemoteControlView extends BaseView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                mCurrentSelected = 0;
+                break;
+            case MotionEvent.ACTION_CANCEL:
                 mCurrentSelected = 0;
                 break;
         }

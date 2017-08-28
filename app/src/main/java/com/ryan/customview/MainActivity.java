@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         mModels.add(new PageModel(R.layout.fragment_search, R.string.title_search));
         mModels.add(new PageModel(R.layout.fragment_test, R.string.title_test));
         mModels.add(new PageModel(R.layout.fragment_control, R.string.title_control));
+        mModels.add(new PageModel(R.layout.fragment_drag, R.string.title_drag));
     }
 
     @Override

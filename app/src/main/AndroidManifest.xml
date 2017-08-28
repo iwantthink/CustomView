@@ -9,10 +9,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data
-            android:name="HMT_CHANGEL"
-            android:value="11111"
-            ></meta-data>
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"

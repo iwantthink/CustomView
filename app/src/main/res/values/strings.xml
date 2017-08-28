@@ -4,5 +4,6 @@
     <string name="title_circle">circle</string>
     <string name="title_search">search</string>
     <string name="title_test">test</string>
-    <string name="title_control">remote-control</string>
+    <string name="title_control">control</string>
+    <string name="title_drag">drag</string>
 </resources>

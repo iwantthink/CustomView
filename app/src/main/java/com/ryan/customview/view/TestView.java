@@ -2,13 +2,14 @@ package com.ryan.customview.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 
 /**
  * Created by renbo on 2017/8/22.
@@ -42,11 +43,57 @@ public class TestView extends BaseView {
     private Path mPath = new Path();
     private Region mRegion = new Region();
     private Region gloabalRegion = new Region();
+    private GestureDetector mGestureDetector;
 
     private void init(Context context) {
-        setLayerType(LAYER_TYPE_SOFTWARE, null);
+        mGestureDetector = new GestureDetector(context, new GestureDetector.OnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                Log.d("TestView", "onDown");
+                return false;
+            }
+
+            @Override
+            public void onShowPress(MotionEvent e) {
+                Log.d("TestView", "showPress");
+
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                Log.d("TestView", "onSingleTapUp");
+                return true;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                Log.d("TestView", "onScroll");
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                Log.d("TestView", "onLongPress");
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                Log.d("TestView", "onFling");
+                return false;
+            }
+        });
+
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mGestureDetector.onTouchEvent(event);
+            }
+        });
+
+//        setLayerType(LAYER_TYPE_SOFTWARE, null);
 
     }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -64,7 +111,6 @@ public class TestView extends BaseView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
 
-
         return super.dispatchTouchEvent(event);
     }
 
@@ -76,33 +122,19 @@ public class TestView extends BaseView {
         mX = event.getX();
         mY = event.getY();
 
-        Log.d("TestView", "event.getX():" + event.getX());
-        Log.d("TestView", "event.getRawX():" + event.getRawX());
-        Log.d("TestView", "event.getY():" + event.getY());
-        Log.d("TestView", "event.getRawY():" + event.getRawY());
-
         invalidate();
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-//                Log.d("TestView", "mRegion.contains(x,y):" +
-//                        mRegion.contains((int) mX, (int) mY));
-                Log.d("TestView", "actionDown");
                 break;
             case MotionEvent.ACTION_MOVE:
-//                Log.d("TestView", "actionMove");
                 break;
             case MotionEvent.ACTION_UP:
-                Log.d("TestView", "actionUp");
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                Log.d("TestView", "actionPointerDown");
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                Log.d("TestView", "actionPointerUp");
                 break;
         }
-
-
         return super.onTouchEvent(event);
     }
 
@@ -114,11 +146,6 @@ public class TestView extends BaseView {
         drawAuxiliary(canvas);
         canvas.save();
         canvas.translate(mWidth / 2, mHeight / 2);
-        Matrix matrix = new Matrix();
-        canvas.getMatrix().invert(matrix);
-        float[] arrary = new float[]{mX, mY};
-        matrix.mapPoints(arrary);
-        canvas.drawCircle(arrary[0], arrary[1], 10, mPaint);
         canvas.restore();
     }
 
