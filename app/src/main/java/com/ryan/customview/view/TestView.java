@@ -50,13 +50,12 @@ public class TestView extends BaseView {
             @Override
             public boolean onDown(MotionEvent e) {
                 Log.d("TestView", "onDown");
-                return false;
+                return true;
             }
 
             @Override
             public void onShowPress(MotionEvent e) {
                 Log.d("TestView", "showPress");
-
             }
 
             @Override
@@ -79,10 +78,26 @@ public class TestView extends BaseView {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 Log.d("TestView", "onFling");
+                return true;
+            }
+        });
+        mGestureDetector.setIsLongpressEnabled(true);
+        mGestureDetector.setOnDoubleTapListener(new GestureDetector.OnDoubleTapListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onDoubleTapEvent(MotionEvent e) {
                 return false;
             }
         });
-
         setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -93,6 +108,7 @@ public class TestView extends BaseView {
 //        setLayerType(LAYER_TYPE_SOFTWARE, null);
 
     }
+
 
 
     @Override
@@ -108,45 +124,31 @@ public class TestView extends BaseView {
         mRegion.setPath(mPath, gloabalRegion);
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
 
-        return super.dispatchTouchEvent(event);
-    }
 
-    private float mX;
-    private float mY;
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        mX = event.getX();
-        mY = event.getY();
-
-        invalidate();
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                break;
-            case MotionEvent.ACTION_MOVE:
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                break;
-        }
-        return super.onTouchEvent(event);
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        switch (event.getActionMasked()) {
+//            case MotionEvent.ACTION_DOWN:
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                break;
+//            case MotionEvent.ACTION_POINTER_DOWN:
+//                break;
+//            case MotionEvent.ACTION_POINTER_UP:
+//                break;
+//        }
+//        return super.onTouchEvent(event);
+//    }
 
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         drawAuxiliary(canvas);
-        canvas.save();
-        canvas.translate(mWidth / 2, mHeight / 2);
-        canvas.restore();
+        canvas.drawCircle(0, 0, 100, mPaint);
     }
 
 
