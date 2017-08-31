@@ -44,7 +44,7 @@ public abstract class BaseView extends View {
         mAuxiliaryPath.lineTo(mWidth / 2, mHeight);
         mAuxiliaryPath.moveTo(0, mHeight / 2);
         mAuxiliaryPath.lineTo(mWidth, mHeight / 2);
-        mAuxiliaryPaint.setPathEffect(new DashPathEffect(new float[]{5, 10}, 0));
+        mAuxiliaryPaint.setPathEffect(new DashPathEffect(new float[]{20, 5}, 0));
         mAuxiliaryPaint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(mAuxiliaryPath, mAuxiliaryPaint);
         mAuxiliaryPaint.reset();

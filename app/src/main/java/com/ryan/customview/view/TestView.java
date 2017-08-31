@@ -2,8 +2,8 @@ package com.ryan.customview.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Region;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 
 /**
@@ -36,27 +36,24 @@ public class TestView extends BaseView {
     }
 
 
-    private Region mRegion = new Region();
     private void init(Context context) {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
-//        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setShadowLayer(50, 50, 50, Color.RED);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(30);
+        mPaint.setStrokeJoin(Paint.Join.MITER);
+        mPath.lineTo(500, 500);
+        mPath.lineTo(700, 200);
     }
 
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-    }
-
+    private Path mPath = new Path();
+    private float mWaveLength = 200;
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawAuxiliary(canvas);
-        canvas.drawCircle(mWidth / 2, mHeight / 2, 100, mPaint);
+        canvas.drawPath(mPath, mPaint);
 
     }
-
 
 }
