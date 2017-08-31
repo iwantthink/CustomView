@@ -9,7 +9,6 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -25,7 +24,7 @@ public class FakeSearchView extends View implements View.OnClickListener {
     private SEARCH_STATE mCurrentState = SEARCH_STATE.NONE;
     private PathMeasure mPathMeasure = new PathMeasure();
     private boolean IS_SEARCHING_FINISHED = false;
-    private int mDefaultSearchingCount = 2;
+    private int mDefaultSearchingCount = 3;//默认旋转次数
     private int mCurrentSearchingCount = 1;
 
     public void stopSearching() {
@@ -103,6 +102,11 @@ public class FakeSearchView extends View implements View.OnClickListener {
     private void drawEnding(Canvas canvas) {
         mDst.reset();
         mPathMeasure.setPath(mSearchPath, false);
+        //onAnimationRepeat 会在mFrac 到大1 之前执行 ，这就会导致 在绘制 ENDING 时，先闪现一下 完整的search
+        //为了避免这种情况,所以在mFrac==1 时，手动置0
+        if (mFrac == 1) {
+            mFrac = 0;
+        }
         mPathMeasure.getSegment((1 - mFrac) * mPathMeasure.getLength(),
                 mPathMeasure.getLength(), mDst, true);
         canvas.save();
@@ -147,6 +151,9 @@ public class FakeSearchView extends View implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        if (null != mAnimator && mAnimator.isRunning()) {
+            mAnimator.cancel();
+        }
         mCurrentState = SEARCH_STATE.STARTING;
         mAnimator = ValueAnimator.ofFloat(0, 1);
         mAnimator.setDuration(2000);
@@ -177,14 +184,14 @@ public class FakeSearchView extends View implements View.OnClickListener {
 
             @Override
             public void onAnimationRepeat(Animator animation) {
-                Log.d("FakeSearchView", "mCurrentSearchingCount:" + mCurrentSearchingCount);
                 if (mCurrentState == SEARCH_STATE.STARTING) {
                     mCurrentState = SEARCH_STATE.SEARCHING;
-                } else if (mCurrentState == SEARCH_STATE.SEARCHING && (IS_SEARCHING_FINISHED
-                        || mDefaultSearchingCount <= mCurrentSearchingCount)) {
-                    mCurrentState = SEARCH_STATE.ENDING;
                 } else if (mCurrentState == SEARCH_STATE.SEARCHING) {
                     mCurrentSearchingCount++;
+                    if (IS_SEARCHING_FINISHED
+                            || mDefaultSearchingCount <= mCurrentSearchingCount) {
+                        mCurrentState = SEARCH_STATE.ENDING;
+                    }
                 } else if (mCurrentState == SEARCH_STATE.ENDING) {
                     mCurrentState = SEARCH_STATE.NONE;
                 }
