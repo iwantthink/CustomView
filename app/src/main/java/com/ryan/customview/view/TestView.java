@@ -7,9 +7,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
+import android.util.Log;
 
 /**
  * Created by renbo on 2017/8/22.
@@ -45,62 +44,41 @@ public class TestView extends BaseView {
 
     private void init(Context context) {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
-//        mPaint.setStyle(Paint.Style.FILL);
-//        mPaint.setStrokeWidth(30);
-//        mPaint.setStrokeJoin(Paint.Join.MITER);
-////        mPath.lineTo(500, 500);
-////        mPath.lineTo(700, 200);
-//        Canvas canvas = new Canvas();
-//        dst = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
-//        canvas.setBitmap(dst);
-//        mPaint.setColor(Color.BLUE);
-//        canvas.drawCircle(100, 100, 100, mPaint);
-//        src = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
-//        canvas.setBitmap(src);
-        mCirclePaint.setStyle(Paint.Style.FILL);
         mCirclePaint.setColor(Color.BLUE);
-        mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(Color.RED);
-        mPaint.setStrokeWidth(20);
-        mMatrix = new Matrix();
 
     }
 
     private Path mPath = new Path();
     private float[] mPoint = new float[2];
-
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        mPoint[0] = event.getX();
-//        mPoint[1] = event.getY();
-//        mMatrix.mapPoints(mPoint);
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//                mPath.moveTo(mPoint[0], mPoint[1]);
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                mPath.lineTo(mPoint[0], mPoint[1]);
-//                break;
-//        }
-//        postInvalidate();
-//        return true;
-//    }
-
     private Matrix mMatrix;
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        drawAuxiliary(canvas);
-        int layerID = canvas.saveLayer(0, 0, mWidth, mHeight, mPaint, Canvas.ALL_SAVE_FLAG);
-        canvas.translate(mWidth / 2, mHeight / 2);
-        canvas.drawCircle(100, 100, 100, mCirclePaint);//dst
-        mCirclePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-        mCirclePaint.setColor(Color.RED);
-        canvas.drawRect(0, 0, 200, 200, mCirclePaint);//src
-        mCirclePaint.setXfermode(null);
-        canvas.restoreToCount(layerID);
+//        drawAuxiliary(canvas);
+//        canvas.drawColor(Color.BLACK);
+        Log.d("TestView", "canvas.getSaveCount():" + canvas.getSaveCount());
 
+        int id1 = canvas.saveLayer(0, 0, mWidth, mHeight, mPaint, Canvas.ALL_SAVE_FLAG);
+        canvas.clipRect(0, 0, 800, 800);
+        canvas.drawColor(Color.RED);
+        Log.d("TestView", "canvas.getSaveCount():" + (canvas.getSaveCount() + ",id1 = " + id1));
+
+        int id2 = canvas.saveLayer(0, 0, mWidth, mHeight, mPaint, Canvas.ALL_SAVE_FLAG);
+        canvas.clipRect(0, 0, 600, 600);
+        canvas.drawColor(Color.GREEN);
+        Log.d("TestView", "canvas.getSaveCount():" + (canvas.getSaveCount() + ",id2 = " + id2));
+
+
+        int id3 = canvas.saveLayer(0, 0, mWidth, mHeight, mPaint, Canvas.ALL_SAVE_FLAG);
+        canvas.clipRect(0, 0, 400, 400);
+        canvas.drawColor(Color.BLUE);
+        Log.d("TestView", "canvas.getSaveCount():" + (canvas.getSaveCount() + ",id3 = " + id3));
+
+        canvas.restoreToCount(id2);
+        canvas.drawColor(Color.GRAY);
+        Log.d("TestView", "canvas.getSaveCount():" + canvas.getSaveCount());
 
     }
 
