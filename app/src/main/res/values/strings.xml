@@ -6,4 +6,5 @@
     <string name="title_test">test</string>
     <string name="title_control">control</string>
     <string name="title_drag">drag</string>
+    <string name="title_shadow">shadow</string>
 </resources>
