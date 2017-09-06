@@ -3,9 +3,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <com.ryan.customview.view.TestView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <com.ryan.customview.view.BitmapShaderView
+        android:id="@+id/ttt"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="visible"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@id/ttt"
+        android:background="@color/colorAccent"
+        android:src="@mipmap/puppy"/>
 
 
 </RelativeLayout>

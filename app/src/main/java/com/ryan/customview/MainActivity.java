@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mTlTitle.setupWithViewPager(mVpContent, true);
-        mTlTitle.getTabAt(6).select();
+        mTlTitle.getTabAt(3).select();
 
     }
 
