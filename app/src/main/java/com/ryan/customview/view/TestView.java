@@ -1,8 +1,10 @@
 package com.ryan.customview.view;
 
 import android.content.Context;
+import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
@@ -39,6 +41,7 @@ public class TestView extends BaseView {
 
     private void init(Context context) {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
+        mPaint.setColor(Color.RED);
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,6 +53,7 @@ public class TestView extends BaseView {
     private Path mPath = new Path();
     private float mFraction;
     private static final float DEFAULT_ROTATION = 45;
+    private Paint mPaintB = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public float getFraction() {
         return mFraction;
@@ -65,10 +69,47 @@ public class TestView extends BaseView {
         super.onDraw(canvas);
         drawAuxiliary(canvas);
         canvas.drawColor(Color.BLACK);
-        mPaint.setColor(Color.RED);
+        drawNormal(canvas);
+//        drawCollapse(canvas);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mLeft = 100;
+        mTop = 100;
+        mRight = mWidth - 100;
+        mBottom = mHeight / 2;
+    }
+
+    private float mLeft;
+    private float mTop;
+    private float mRight;
+    private float mBottom;
+
+    private CollapseOrientation mCurrentCollapse = CollapseOrientation.BOTTOM;
+
+    enum CollapseOrientation {
+        LEFT, RIGHT, TOP, BOTTOM
+    }
+
+    private void drawNormal(Canvas canvas) {
+        canvas.drawRect(mLeft, mTop, mRight, mBottom, mPaint);
+       
+    }
+
+    private void drawCollapse(Canvas canvas) {
         canvas.save();
-        canvas.rotate(DEFAULT_ROTATION * mFraction, mWidth / 2, mHeight / 2);
-        canvas.drawRect(100, 100, mWidth - 100, mHeight - 100, mPaint);
+        canvas.clipRect(0, mHeight / 2, mWidth, mHeight);
+        Camera camera = new Camera();
+        camera.setLocation(0, 0, -15);
+        canvas.translate(mWidth / 2, mHeight / 2);
+        camera.save();
+        camera.rotateX(DEFAULT_ROTATION * mFraction);
+        camera.applyToCanvas(canvas);
+        canvas.translate(-mWidth / 2, -mHeight / 2);
+        camera.restore();
+        canvas.drawRect(100, mHeight / 2, mWidth - 100, mHeight - 100, mPaint);
         canvas.restore();
     }
 

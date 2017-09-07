@@ -41,8 +41,14 @@ public class AnimActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_A:
                 ObjectAnimator animator = ObjectAnimator.ofFloat(mView, "fraction", 0, 1);
                 Path path = new Path();
-//                path.lineTo(0, 1);
-//                path.lineTo(0.5f, 0);
+                path.lineTo(0.125f, 1);
+                path.lineTo(0.25f, 0);
+                path.lineTo(0.375f, 1);
+                path.lineTo(0.5f, 0);
+                path.lineTo(0.625f, 1);
+                path.lineTo(0.75f, 0);
+                path.lineTo(0.875f, 1);
+                path.lineTo(1, 0);
                 path.lineTo(1, 1);
                 animator.setInterpolator(new PathInterpolator(path));
                 animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -51,7 +57,8 @@ public class AnimActivity extends AppCompatActivity implements View.OnClickListe
                         Log.d("AnimActivity", "animation.getAnimatedValue():" + animation.getAnimatedValue());
                     }
                 });
-                animator.setDuration(5000);
+//                animator.setRepeatCount(10);
+                animator.setDuration(2000);
                 animator.start();
                 break;
             case R.id.btn_B:
