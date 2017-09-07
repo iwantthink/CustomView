@@ -1,17 +1,11 @@
 package com.ryan.customview.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-
-import com.ryan.customview.R;
+import android.view.View;
 
 /**
  * Created by renbo on 2017/8/22.
@@ -42,37 +36,40 @@ public class TestView extends BaseView {
         }
     }
 
-    private Bitmap dst, src;
-    private Paint mCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Bitmap mBitmap;
-    private Bitmap mBitmapB;
 
     private void init(Context context) {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
-        mCirclePaint.setColor(Color.BLUE);
-        mPaint.setColor(Color.RED);
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        mBitmapB = mBitmap.extractAlpha();
-
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animate().translationX(100);
+            }
+        });
     }
 
     private Path mPath = new Path();
-    private float[] mPoint = new float[2];
-    private Matrix mMatrix;
+    private float mFraction;
+    private static final float DEFAULT_ROTATION = 45;
+
+    public float getFraction() {
+        return mFraction;
+    }
+
+    public void setFraction(float fraction) {
+        mFraction = fraction;
+        postInvalidate();
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawAuxiliary(canvas);
+        canvas.drawColor(Color.BLACK);
+        mPaint.setColor(Color.RED);
         canvas.save();
-        canvas.translate(mWidth / 2, mHeight / 2);
-        mPaint.setColor(Color.BLUE);
-        mPaint.setMaskFilter(new BlurMaskFilter(5, BlurMaskFilter.Blur.OUTER));
-        canvas.drawBitmap(mBitmapB, 0, 0, mPaint);
-        mPaint.setMaskFilter(null);
-        canvas.drawBitmap(mBitmap, 0, 0, mPaint);
+        canvas.rotate(DEFAULT_ROTATION * mFraction, mWidth / 2, mHeight / 2);
+        canvas.drawRect(100, 100, mWidth - 100, mHeight - 100, mPaint);
         canvas.restore();
-
     }
 
 }
