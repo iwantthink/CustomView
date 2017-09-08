@@ -1,13 +1,16 @@
 package com.ryan.customview.view;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 /**
  * Created by renbo on 2017/8/22.
@@ -41,28 +44,79 @@ public class TestView extends BaseView {
 
     private void init(Context context) {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
+        initAnim();
         mPaint.setColor(Color.RED);
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                animate().translationX(100);
+                if (null != mAnimator && !mAnimator.isRunning()) {
+                    mCurrentCollapse = CollapseOrientation.BOTTOM;
+                    mAnimator.start();
+                }
             }
         });
     }
 
-    private Path mPath = new Path();
+    private ObjectAnimator mAnimator;
+    private int mCurrentCount = 0;
+
+    private void initAnim() {
+
+        mAnimator = ObjectAnimator.ofFloat(this, "fraction", 0, 1);
+        mAnimator.setInterpolator(new LinearInterpolator());
+//        Path path = new Path();
+//        path.lineTo(0.125f, 1);
+//        path.lineTo(0.25f, 0);
+//        path.lineTo(0.375f, 1);
+//        path.lineTo(0.5f, 0);
+//        path.lineTo(0.625f, 1);
+//        path.lineTo(0.75f, 0);
+//        path.lineTo(0.875f, 1);
+//        path.lineTo(1, 0);
+//        path.lineTo(1, 1);
+//        mAnimator.setInterpolator(new PathInterpolator(path));
+        mAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                Log.d("TestView", "mCurrentCount:" + mCurrentCount);
+                switch (mCurrentCount) {
+                    case 0:
+                        mCurrentCollapse = CollapseOrientation.RIGHT;
+                        break;
+                    case 1:
+                        mCurrentCollapse = CollapseOrientation.TOP;
+                        break;
+                    case 2:
+                        mCurrentCollapse = CollapseOrientation.LEFT;
+                        break;
+                }
+                mCurrentCount++;
+            }
+        });
+        mAnimator.setRepeatCount(3);
+        mAnimator.setDuration(2000);
+
+    }
+
+
     private float mFraction;
     private static final float DEFAULT_ROTATION = 45;
     private Paint mPaintB = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-    public float getFraction() {
-        return mFraction;
-    }
-
-    public void setFraction(float fraction) {
-        mFraction = fraction;
-        postInvalidate();
-    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -94,8 +148,35 @@ public class TestView extends BaseView {
     }
 
     private void drawNormal(Canvas canvas) {
+        switch (mCurrentCollapse) {
+            case LEFT:
+                mLeft = 100;
+                mTop = 100;
+                mRight = mWidth / 2;
+                mBottom = mHeight - 100;
+                break;
+            case RIGHT:
+                mLeft = mWidth / 2;
+                mTop = 100;
+                mRight = mWidth - 100;
+                mBottom = mHeight - 100;
+                break;
+            case TOP:
+                mLeft = 100;
+                mTop = 100;
+                mRight = mWidth - 100;
+                mBottom = mHeight / 2;
+                break;
+            case BOTTOM:
+                mLeft = 100;
+                mTop = mHeight / 2;
+                mRight = mWidth - 100;
+                mBottom = mHeight - 100;
+                break;
+        }
+
         canvas.drawRect(mLeft, mTop, mRight, mBottom, mPaint);
-       
+
     }
 
     private void drawCollapse(Canvas canvas) {
