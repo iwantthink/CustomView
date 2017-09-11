@@ -1,5 +1,6 @@
 package com.ryan.customview;
 
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +35,8 @@ public class AnimActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_A:
-
+                ObjectAnimator animator;
+//                animator.setEvaluator(new ArgbEvaluator());
                 break;
             case R.id.btn_B:
 

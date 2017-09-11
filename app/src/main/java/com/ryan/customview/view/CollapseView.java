@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
@@ -74,8 +73,8 @@ public class CollapseView extends BaseView {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mFraction = 0;
-                mCurrentCollapse = CollapseOrientation.BOTTOM;
-                mLastCollapse = CollapseOrientation.BOTTOM;
+                mCurrentCollapse = DEFAULT_COLLAPSE_TYPE;
+                mLastCollapse = DEFAULT_COLLAPSE_TYPE;
                 postInvalidate();
             }
 
@@ -86,23 +85,31 @@ public class CollapseView extends BaseView {
 
             @Override
             public void onAnimationRepeat(Animator animation) {
-                Log.d("TestView", "mCurrentCount:" + mCurrentCount);
+                //默认从BOTTOM->RIGHT->TOP->LEFT
+                //实际上是TOP->LEFT->BOTTOM->RIGHT
                 switch (mCurrentCount) {
                     case 0:
                         mCurrentCollapse = CollapseOrientation.RIGHT;
+                        mLastCollapse = CollapseOrientation.BOTTOM;
                         break;
                     case 1:
                         mCurrentCollapse = CollapseOrientation.TOP;
+                        mLastCollapse = CollapseOrientation.RIGHT;
                         break;
                     case 2:
                         mCurrentCollapse = CollapseOrientation.LEFT;
+                        mLastCollapse = CollapseOrientation.TOP;
+                        break;
+                    default:
+                        mCurrentCollapse = CollapseOrientation.BOTTOM;
+                        mLastCollapse = CollapseOrientation.BOTTOM;
                         break;
                 }
                 mCurrentCount++;
             }
         });
         mAnimator.setRepeatCount(3);
-        mAnimator.setDuration(2000);
+        mAnimator.setDuration(500);
 
     }
 
@@ -116,52 +123,32 @@ public class CollapseView extends BaseView {
         switch (mCurrentCollapse) {
             //画右边 last is top
             case LEFT:
-                mLastCollapse = CollapseOrientation.TOP;
                 //draw left
-                drawCollapse(canvas, mWidth / 2, mWidth, 0, mHeight,
+                drawCollapseOpen(canvas,
                         mWidth / 2, mWidth - 100, 100, mHeight - 100,
                         DEFAULT_ROTATION * mFraction, mCurrentCollapse);
-                //draw top
-                drawCollapse(canvas, 0, mWidth, mHeight / 2, mHeight,
-                        100, mWidth - 100, mHeight / 2, mHeight - 100,
-                        DEFAULT_ROTATION * (1 - mFraction), mLastCollapse);
+
                 break;
             //画底部
             case TOP:
-                mLastCollapse = CollapseOrientation.RIGHT;
                 //draw top
-                drawCollapse(canvas, 0, mWidth, mHeight / 2, mHeight,
+                drawCollapseOpen(canvas,
                         100, mWidth - 100, mHeight / 2, mHeight - 100,
                         DEFAULT_ROTATION * mFraction, mCurrentCollapse);
-                //draw right
-                drawCollapse(canvas, 0, mWidth / 2, 0, mHeight,
-                        100, mWidth / 2, 100, mHeight - 100,
-                        DEFAULT_ROTATION * (1 - mFraction), mLastCollapse);
                 break;
             //画顶部
             case BOTTOM:
-                mLastCollapse = CollapseOrientation.LEFT;
                 //draw bottom
-                drawCollapse(canvas, 0, mWidth, 0, mHeight / 2,
+                drawCollapseOpen(canvas,
                         100, mWidth - 100, 100, mHeight / 2,
                         DEFAULT_ROTATION * mFraction, mCurrentCollapse);
-                //draw left
-                drawCollapse(canvas, mWidth / 2, mWidth, 0, mHeight,
-                        mWidth / 2, mWidth - 100, 100, mHeight - 100,
-                        DEFAULT_ROTATION * (1 - mFraction), mLastCollapse);
-
                 break;
             //画左边
             case RIGHT:
-                mLastCollapse = CollapseOrientation.BOTTOM;
                 //draw right
-                drawCollapse(canvas, 0, mWidth / 2, 0, mHeight,
+                drawCollapseOpen(canvas,
                         100, mWidth / 2, 100, mHeight - 100,
                         DEFAULT_ROTATION * mFraction, mCurrentCollapse);
-                //draw bottom
-                drawCollapse(canvas, 0, mWidth, 0, mHeight / 2,
-                        100, mWidth - 100, 100, mHeight / 2,
-                        DEFAULT_ROTATION * (1 - mFraction), mLastCollapse);
                 break;
         }
 
@@ -181,8 +168,10 @@ public class CollapseView extends BaseView {
     private float mRight;
     private float mBottom;
 
-    private CollapseOrientation mCurrentCollapse = CollapseOrientation.BOTTOM;
-    private CollapseOrientation mLastCollapse = CollapseOrientation.BOTTOM;
+    //实际绘制的部分相反 ...
+    private CollapseOrientation DEFAULT_COLLAPSE_TYPE = CollapseOrientation.BOTTOM;
+    private CollapseOrientation mCurrentCollapse = DEFAULT_COLLAPSE_TYPE;
+    private CollapseOrientation mLastCollapse = DEFAULT_COLLAPSE_TYPE;
 
     enum CollapseOrientation {
         LEFT, RIGHT, TOP, BOTTOM
@@ -209,10 +198,18 @@ public class CollapseView extends BaseView {
                 mBottom = mHeight / 2;
                 break;
             case BOTTOM:
-                mLeft = 100;
-                mTop = mHeight / 2;
-                mRight = mWidth - 100;
-                mBottom = mHeight - 100;
+                if (mCurrentCollapse == DEFAULT_COLLAPSE_TYPE) {
+                    mLeft = 100;
+                    mTop = mHeight / 2;
+                    mRight = mWidth - 100;
+                    mBottom = mHeight - 100;
+                } else {
+                    mLeft = 100;
+                    mTop = mHeight / 2;
+                    mRight = mWidth / 2;
+                    mBottom = mHeight - 100;
+                }
+
                 break;
         }
 
@@ -220,31 +217,46 @@ public class CollapseView extends BaseView {
 
     }
 
-    private void drawCollapse(Canvas canvas,
-                              float clipLeft, float clipRight, float clipTop, float clipBottom,
-                              float drawLeft, float drawRight, float drawTop, float drawBottom,
-                              float rotateAngle, CollapseOrientation collapse) {
+    /*
+        绘制的三个状态
+        1. 只用绘制打开状态
+        2. 只用绘制关闭状态
+        3. 需要同时绘制打开和关闭状态
+     */
+    private void drawCollapseOpen(Canvas canvas,
+                                  float drawLeft, float drawRight, float drawTop, float drawBottom,
+                                  float rotateAngle, CollapseOrientation collapse) {
+        //绘制打开状态
         canvas.save();
-        canvas.clipRect(clipLeft, clipTop, clipRight, clipBottom);
+        switch (collapse) {
+            case LEFT:
+                canvas.clipRect(mWidth / 2, 0, mWidth, mHeight / 2);
+                break;
+            case TOP:
+                canvas.clipRect(mWidth / 2, mHeight / 2, mWidth, mHeight);
+                break;
+            case RIGHT:
+                canvas.clipRect(0, mHeight / 2, mWidth / 2, mHeight);
+                break;
+            case BOTTOM:
+                canvas.clipRect(0, 0, mWidth, mHeight);
+                break;
+        }
         Camera camera = new Camera();
-        camera.setLocation(0, 0, -12);
+        camera.setLocation(0, 0, -15);
         canvas.translate(mWidth / 2, mHeight / 2);
         camera.save();
         switch (collapse) {
             case LEFT:
-//                camera.rotateY(mFraction < 0.5f ? -DEFAULT_ROTATION * mFraction : -DEFAULT_ROTATION * (1 - mFraction));
                 camera.rotateY(-rotateAngle);
                 break;
             case TOP:
-//                camera.rotateX(mFraction < 0.5f ? DEFAULT_ROTATION * mFraction : DEFAULT_ROTATION * (1 - mFraction));
                 camera.rotateX(rotateAngle);
                 break;
             case RIGHT:
-//                camera.rotateY(mFraction < 0.5f ? DEFAULT_ROTATION * mFraction : DEFAULT_ROTATION * (1 - mFraction));
                 camera.rotateY(rotateAngle);
                 break;
             case BOTTOM:
-//                camera.rotateX(mFraction < 0.5f ? -DEFAULT_ROTATION * mFraction : -DEFAULT_ROTATION * (1 - mFraction));
                 camera.rotateX(-rotateAngle);
                 break;
         }
@@ -253,6 +265,151 @@ public class CollapseView extends BaseView {
         canvas.translate(-mWidth / 2, -mHeight / 2);
         camera.restore();
         canvas.drawRect(drawLeft, drawTop, drawRight, drawBottom, mPaint);
+        canvas.restore();
+
+
+        drawCollapseClose(canvas, rotateAngle, camera, collapse);
+        drawCollapseBoth(canvas, rotateAngle, camera, collapse);
+    }
+
+    private void drawCollapseClose(Canvas canvas, float rotateAngle, Camera camera, CollapseOrientation collapse) {
+        canvas.save();
+        switch (collapse) {
+            case LEFT:
+                canvas.clipRect(0, mHeight / 2, mWidth / 2, mHeight);
+                break;
+            case TOP:
+                canvas.clipRect(0, 0, mWidth / 2, mHeight / 2);
+                break;
+            case RIGHT:
+                canvas.clipRect(mWidth / 2, 0, mWidth, mHeight / 2);
+                break;
+            case BOTTOM:
+                canvas.clipRect(mWidth / 2, mHeight / 2, mWidth, mHeight);
+                break;
+        }
+        camera.save();
+        canvas.translate(mWidth / 2, mHeight / 2);
+        switch (collapse) {
+            case LEFT:
+                camera.rotateX(DEFAULT_ROTATION - rotateAngle);
+                break;
+            case TOP:
+                camera.rotateY(DEFAULT_ROTATION - rotateAngle);
+                break;
+            case RIGHT:
+                camera.rotateX(-(DEFAULT_ROTATION - rotateAngle));
+                break;
+            case BOTTOM:
+                camera.rotateY(-(DEFAULT_ROTATION - rotateAngle));
+                break;
+        }
+        camera.applyToCanvas(canvas);
+        camera.restore();
+        canvas.translate(-mWidth / 2, -mHeight / 2);
+
+        switch (collapse) {
+            case LEFT:
+                canvas.drawRect(100, mHeight / 2, mWidth / 2, mHeight - 100, mPaint);
+                break;
+            case TOP:
+                canvas.drawRect(100, 100, mWidth / 2, mHeight / 2, mPaint);
+                break;
+            case RIGHT:
+                canvas.drawRect(mWidth / 2, 100, mWidth - 100, mHeight / 2, mPaint);
+                break;
+            case BOTTOM:
+                // 如果默认位置是bottom 则不需要绘制 默认位置之前的。。。因为没有啊
+                if (collapse != DEFAULT_COLLAPSE_TYPE) {
+                    canvas.drawRect(mWidth / 2, mHeight / 2, mWidth - 100, mHeight - 100, mPaint);
+                }
+                break;
+        }
+
+        canvas.restore();
+    }
+
+    private void drawCollapseBoth(Canvas canvas, float rotateAngle, Camera camera, CollapseOrientation collapse) {
+        //绘制同时打开和关闭状态
+        canvas.save();
+        switch (collapse) {
+            case LEFT:
+                if (mLastCollapse == CollapseOrientation.TOP) {
+                    canvas.clipRect(mWidth / 2, mHeight / 2, mWidth, mHeight);
+                }
+                break;
+            case TOP:
+                if (mLastCollapse == CollapseOrientation.RIGHT) {
+                    canvas.clipRect(0, mHeight / 2, mWidth / 2, mHeight);
+                }
+                break;
+            case RIGHT:
+                if (mLastCollapse == CollapseOrientation.BOTTOM) {
+                    canvas.clipRect(0, 0, mWidth / 2, mHeight / 2);
+                }
+                break;
+            case BOTTOM:
+                if (mLastCollapse == CollapseOrientation.LEFT) {
+                    canvas.clipRect(mWidth / 2, 0, mWidth, mHeight / 2);
+                }
+                break;
+        }
+
+        canvas.translate(mWidth / 2, mHeight / 2);
+        camera.save();
+        switch (collapse) {
+            case LEFT:
+                if (mLastCollapse == CollapseOrientation.TOP) {
+                    camera.rotateY(-rotateAngle);
+                    camera.rotateX(DEFAULT_ROTATION - rotateAngle);
+                }
+                break;
+            case TOP:
+                if (mLastCollapse == CollapseOrientation.RIGHT) {
+                    camera.rotateX(rotateAngle);
+                    camera.rotateY(DEFAULT_ROTATION - rotateAngle);
+                }
+                break;
+            case RIGHT:
+                if (mLastCollapse == CollapseOrientation.BOTTOM) {
+                    camera.rotateY(rotateAngle);
+                    camera.rotateX(-(DEFAULT_ROTATION - rotateAngle));
+                }
+                break;
+            case BOTTOM:
+                if (mLastCollapse == CollapseOrientation.LEFT) {
+                    camera.rotateX(-rotateAngle);
+                    camera.rotateY(-(DEFAULT_ROTATION - rotateAngle));
+                }
+                break;
+        }
+        camera.applyToCanvas(canvas);
+        camera.restore();
+        canvas.translate(-mWidth / 2, -mHeight / 2);
+
+        switch (collapse) {
+            case LEFT:
+                if (mLastCollapse == CollapseOrientation.TOP) {
+                    canvas.drawRect(mWidth / 2, mHeight / 2, mWidth - 100, mHeight - 100, mPaint);
+                }
+                break;
+            case TOP:
+                if (mLastCollapse == CollapseOrientation.RIGHT) {
+                    canvas.drawRect(100, mHeight / 2, mWidth / 2, mHeight - 100, mPaint);
+                }
+                break;
+            case RIGHT:
+                if (mLastCollapse == CollapseOrientation.BOTTOM) {
+                    canvas.drawRect(100, 100, mWidth / 2, mHeight / 2, mPaint);
+                }
+                break;
+            case BOTTOM:
+                if (mLastCollapse == CollapseOrientation.LEFT) {
+                    canvas.drawRect(mWidth / 2, 100, mWidth - 100, mHeight / 2, mPaint);
+                }
+                break;
+        }
+
         canvas.restore();
     }
 
