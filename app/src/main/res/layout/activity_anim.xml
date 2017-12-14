@@ -45,10 +45,10 @@
 
     </LinearLayout>
 
-    <com.ryan.customview.view.CollapseView
+    <com.ryan.customview.view.DragRedPointView
         android:id="@+id/collapse_view"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"/>
 
 </RelativeLayout>

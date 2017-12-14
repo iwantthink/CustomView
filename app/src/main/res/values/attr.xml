@@ -7,4 +7,33 @@
         <attr name="shadowColor" format="color"></attr>
         <attr name="shadowRadius" format="float"></attr>
     </declare-styleable>
+
+    <declare-styleable name="CircleProgressbar">
+        <attr name="cpb_progress" format="float"/>
+        <attr name="cpb_backgroundProgressWidth" format="integer"/>
+        <attr name="cpb_foregroundProgressWidth" format="integer"/>
+        <attr name="cpb_backgroundProgressColor" format="color"/>
+        <attr name="cpb_foregroundProgressColor" format="color"/>
+        <attr name="cpb_roundedCorner" format="boolean"/>
+        <attr name="cpb_touchEnabled" format="boolean"/>
+        <attr name="cpb_clockwise" format="boolean"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="RyanProgressbar">
+        <attr name="rpb_progress" format="float"></attr>
+        <attr name="rpb_total_progress" format="float"></attr>
+        <attr name="rpb_touch_offset" format="float"></attr>
+        <attr name="rpb_foreground_width" format="float"></attr>
+        <attr name="rpb_background_width" format="float"></attr>
+        <attr name="rpb_foreground_color" format="color"></attr>
+        <attr name="rpb_background_color" format="color"></attr>
+        <attr name="rpb_round_cap" format="boolean"></attr>
+        <attr name="rpb_touchable" format="boolean"></attr>
+        <attr name="rpb_text_size" format="float"></attr>
+        <attr name="rpb_text_color" format="color"></attr>
+
+    </declare-styleable>
+
+
 </resources>

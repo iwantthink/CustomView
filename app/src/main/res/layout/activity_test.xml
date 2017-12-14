@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ryan.customview.copyboard.TestActivity">
+
+    <Button
+        android:id="@+id/btn_clipboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="clip_click"
+        android:text="clipboard"
+        />
+
+    <TextView
+        android:id="@+id/tv_clipboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_clipboard"
+        android:textSize="20dp"/>
+</RelativeLayout>

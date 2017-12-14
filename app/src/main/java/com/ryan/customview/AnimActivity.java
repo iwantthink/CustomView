@@ -8,18 +8,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.ryan.customview.view.CollapseView;
+import com.ryan.customview.view.DragRedPointView;
 
 public class AnimActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private CollapseView mView;
+    private DragRedPointView mView;
     private Button mBtnA, mBtnB, mBtnC, mBtnD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anim);
-        mView = (CollapseView) findViewById(R.id.collapse_view);
+        mView = (DragRedPointView) findViewById(R.id.collapse_view);
         mBtnA = (Button) findViewById(R.id.btn_A);
         mBtnB = (Button) findViewById(R.id.btn_B);
         mBtnC = (Button) findViewById(R.id.btn_C);

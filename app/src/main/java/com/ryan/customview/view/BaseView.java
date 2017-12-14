@@ -26,6 +26,7 @@ public abstract class BaseView extends View {
 
     public BaseView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mTextPaint.setTextSize(20);
     }
 
 
@@ -48,7 +49,10 @@ public abstract class BaseView extends View {
         mAuxiliaryPaint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(mAuxiliaryPath, mAuxiliaryPaint);
         mAuxiliaryPaint.reset();
+    }
 
-
+    protected void drawAuxiText(Canvas canvas, String text) {
+        canvas.drawText(text, 100, 100, mTextPaint);
     }
 }
+
