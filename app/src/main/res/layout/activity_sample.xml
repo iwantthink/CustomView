@@ -21,7 +21,7 @@
 
     <com.ryan.customview.progressbar.RyanProgressbar
         android:id="@+id/ryan"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/circle_a"
         app:rpb_background_color="#cccccc"
@@ -29,11 +29,11 @@
         app:rpb_foreground_color="#ff0000"
         app:rpb_foreground_width="10"
         app:rpb_progress="10"
-        app:rpb_total_progress="100"
-        app:rpb_touchable="true"
-        app:rpb_touch_offset="30"
-        app:rpb_text_size="50"
         app:rpb_text_color="#f00"
+        app:rpb_text_size="30"
+        app:rpb_total_progress="100"
+        app:rpb_touch_offset="30"
+        app:rpb_touchable="true"
         />
 
     <android.support.v7.widget.AppCompatSeekBar

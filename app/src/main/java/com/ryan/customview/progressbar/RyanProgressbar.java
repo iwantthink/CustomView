@@ -30,9 +30,8 @@ public class RyanProgressbar extends View {
     private Paint.Cap mForegroundCap = Paint.Cap.ROUND;//进度条的头部形状
     private boolean mTouchable = true;//是否可以拖动进度条
     private int mProgressPercent = 0;//当前进度百分比
-    private int mPercentTextSize = 20;
+    private int mPercentTextSize = 5;//单位是 sp
     private int mPercentTextColor = 0xffff0000;
-
 
     private Context mContext;
     private Paint mInnerPaint;
@@ -89,16 +88,17 @@ public class RyanProgressbar extends View {
         mInnerPaint.setColor(mForegroundColor);
         mOuterPaint.setColor(mBackgroundColor);
         mInnerPaint.setStrokeCap(mForegroundCap);
-        mTextPaint.setTextSize(30);
         mTextPaint.setColor(mPercentTextColor);
         mTextPaint.setTextSize(mPercentTextSize);
         calculateProgressPercent();
+
 
         pppp.setStyle(Paint.Style.STROKE);
     }
 
     private void calculateProgressPercent() {
         mProgressPercent = (int) (mProgress * 100 / mTotalProgress);
+        calculateText();//百分比变了  文字大小也变了 需要重新计算
     }
 
 
@@ -131,6 +131,7 @@ public class RyanProgressbar extends View {
         initProgress();
         initRaidus();
         initArcRect();
+        calculateText();
     }
 
     /**
@@ -158,28 +159,37 @@ public class RyanProgressbar extends View {
         float max = mBackgroundWidth > mForegroundWidth ? mBackgroundWidth : mForegroundWidth;
         //进度条的半径
         mProgressRadius = (mProgressWidth - max) / 2;
-
     }
 
     Paint pppp = new Paint(Paint.ANTI_ALIAS_FLAG);
 
+    /**
+     * 计算文字显示在中心的位置
+     */
+    private void calculateText() {
+        float strLength = mTextPaint.measureText(mProgressPercent + "%");
+        Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+        float textOffset = Math.abs(fontMetrics.ascent) - (fontMetrics.descent - fontMetrics.ascent) / 2;
+        mTextX = mProgressWidth / 2 - strLength / 2;
+        mTextY = mProgressHeight / 2 + textOffset;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawRect(0, 0, mProgressWidth, mProgressHeight, pppp);
-
         canvas.drawCircle(mProgressWidth / 2, mProgressWidth / 2,
                 mProgressRadius, mOuterPaint);
         canvas.drawArc(mArcRectf, mStartAngle, mSweepAngle, false, mInnerPaint);
-
-        float strLength = mTextPaint.measureText(mProgressPercent + "%");
         canvas.drawText(mProgressPercent + "%",
-                mProgressWidth / 2 - strLength / 2,
-                mProgressHeight / 2,
+                mTextX,
+                mTextY,
                 mTextPaint);
 
-        canvas.drawLine(0, mProgressHeight / 2, mProgressWidth, mProgressHeight / 2, pppp);
-        canvas.drawLine(mProgressWidth / 2, 0, mProgressWidth / 2, mProgressHeight, pppp);
+//        canvas.drawRect(0, 0, mProgressWidth, mProgressHeight, pppp);
+//        canvas.drawLine(0, mProgressHeight / 2,
+//                mProgressWidth, mProgressHeight / 2, pppp);
+//        canvas.drawLine(mProgressWidth / 2, 0, mProgressWidth / 2,
+//                mProgressHeight, pppp);
 
     }
 
@@ -321,6 +331,8 @@ public class RyanProgressbar extends View {
      */
     public void setForegroundProgressColor(int foregroundColor) {
         mForegroundColor = foregroundColor;
+        mInnerPaint.setColor(mForegroundColor);
+        invalidate();
     }
 
     /**
@@ -330,6 +342,8 @@ public class RyanProgressbar extends View {
      */
     public void setBackgroundProgressColor(int backgroundColor) {
         mBackgroundColor = backgroundColor;
+        mOuterPaint.setColor(mBackgroundColor);
+        invalidate();
     }
 
     /**
@@ -339,5 +353,31 @@ public class RyanProgressbar extends View {
      */
     public void setForegroundCap(Paint.Cap foregroundCap) {
         mForegroundCap = foregroundCap;
+        mInnerPaint.setStrokeCap(mForegroundCap);
+        invalidate();
     }
+
+    /**
+     * 设置百分度字体大小 单位:sp
+     *
+     * @param textSize
+     */
+    public void setPercentTextSize(int textSize) {
+        mPercentTextSize = textSize;
+        mTextPaint.setTextSize(sp2px(mContext, mPercentTextSize));
+        calculateText();
+        invalidate();
+    }
+
+    /**
+     * 设置百分比字体颜色
+     *
+     * @param color
+     */
+    public void setPercentTextColor(int color) {
+        mPercentTextColor = color;
+        mTextPaint.setColor(mPercentTextColor);
+        invalidate();
+    }
+
 }

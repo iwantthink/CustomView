@@ -1,6 +1,7 @@
 package com.ryan.customview;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSeekBar;
@@ -9,8 +10,6 @@ import android.view.View;
 import android.widget.SeekBar;
 
 import com.ryan.customview.progressbar.RyanProgressbar;
-
-import java.util.Random;
 
 public class SampleActivity extends AppCompatActivity {
 
@@ -63,8 +62,12 @@ public class SampleActivity extends AppCompatActivity {
     }
 
     public void change_width(View view) {
-        mRyanProgressbar.setBackgroundColor(Color.YELLOW);
-        mRyanProgressbar.setBackgroundWidth(new Random().nextInt(100));
+        mRyanProgressbar.setBackgroundProgressColor(Color.YELLOW);
+        mRyanProgressbar.setForegroundProgressColor(Color.GREEN);
+        mRyanProgressbar.setForegroundCap(Paint.Cap.BUTT);
+        mRyanProgressbar.setPercentTextColor(Color.GRAY);
+        mRyanProgressbar.setPercentTextSize(30);
+//        mRyanProgressbar.setBackgroundWidth(new Random().nextInt(100));
     }
 
 }
