@@ -1,34 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.ryan.customview.SampleActivity">
-
-    <com.ryan.customview.progressbar.CircleProgressbar
-        android:id="@+id/circle_a"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:cpb_backgroundProgressWidth="30"
-        app:cpb_foregroundProgressColor="#1864c2"
-        app:cpb_foregroundProgressWidth="15"
-        app:cpb_progress="50"
-        app:cpb_roundedCorner="true"
-        app:cpb_touchEnabled="true"/>
 
     <com.ryan.customview.progressbar.RyanProgressbar
         android:id="@+id/ryan"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/circle_a"
+        android:visibility="gone"
         app:rpb_background_color="#cccccc"
         app:rpb_background_width="10"
         app:rpb_foreground_color="#ff0000"
         app:rpb_foreground_width="10"
         app:rpb_progress="10"
+        app:rpb_round_cap="false"
+        app:rpb_show_percent="true"
         app:rpb_text_color="#f00"
         app:rpb_text_size="30"
         app:rpb_total_progress="100"
@@ -36,11 +27,15 @@
         app:rpb_touchable="true"
         />
 
+    <com.ryan.customview.progressbar.SquareProgressbar
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        />
+
     <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/pb_a"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ryan"
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp"
         android:layout_marginTop="32dp"/>
@@ -48,9 +43,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/pb_a"
         android:onClick="change_width"
-        android:text="change_width"
+        android:text="click"
         />
 
-</RelativeLayout>
+</LinearLayout>

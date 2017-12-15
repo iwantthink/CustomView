@@ -32,8 +32,11 @@
         <attr name="rpb_touchable" format="boolean"></attr>
         <attr name="rpb_text_size" format="float"></attr>
         <attr name="rpb_text_color" format="color"></attr>
+        <attr name="rpb_show_percent" format="boolean"></attr>
 
     </declare-styleable>
+
+
 
 
 </resources>

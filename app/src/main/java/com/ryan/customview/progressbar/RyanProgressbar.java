@@ -27,11 +27,12 @@ public class RyanProgressbar extends View {
     private float mForegroundWidth = 1f, mBackgroundWidth = 1f;//进度条大小和背景大小
     private int mForegroundColor = 0xffff0000, mBackgroundColor = 0xffcccccc;//进度条颜色和背景颜色
     private float mProgressWidth, mProgressHeight;//控件的长宽
-    private Paint.Cap mForegroundCap = Paint.Cap.ROUND;//进度条的头部形状
+    private Paint.Cap mForegroundCap = Paint.Cap.BUTT;//进度条的头部形状
     private boolean mTouchable = true;//是否可以拖动进度条
     private int mProgressPercent = 0;//当前进度百分比
     private int mPercentTextSize = 5;//单位是 sp
     private int mPercentTextColor = 0xffff0000;
+    private boolean mIsShowPercent = true;
 
     private Context mContext;
     private Paint mInnerPaint;
@@ -75,6 +76,7 @@ public class RyanProgressbar extends View {
             mPercentTextSize = sp2px(context,
                     (int) typedArray.getFloat(R.styleable.RyanProgressbar_rpb_text_size, 5));
             mPercentTextColor = typedArray.getColor(R.styleable.RyanProgressbar_rpb_text_color, 0xffff0000);
+            mIsShowPercent = typedArray.getBoolean(R.styleable.RyanProgressbar_rpb_show_percent, true);
             typedArray.recycle();
         }
 
@@ -180,10 +182,13 @@ public class RyanProgressbar extends View {
         canvas.drawCircle(mProgressWidth / 2, mProgressWidth / 2,
                 mProgressRadius, mOuterPaint);
         canvas.drawArc(mArcRectf, mStartAngle, mSweepAngle, false, mInnerPaint);
-        canvas.drawText(mProgressPercent + "%",
-                mTextX,
-                mTextY,
-                mTextPaint);
+        if (mIsShowPercent) {
+            canvas.drawText(mProgressPercent + "%",
+                    mTextX,
+                    mTextY,
+                    mTextPaint);
+        }
+
 
 //        canvas.drawRect(0, 0, mProgressWidth, mProgressHeight, pppp);
 //        canvas.drawLine(0, mProgressHeight / 2,
@@ -379,5 +384,17 @@ public class RyanProgressbar extends View {
         mTextPaint.setColor(mPercentTextColor);
         invalidate();
     }
+
+
+    /**
+     * 是否显示百分比
+     *
+     * @param isShowPercent
+     */
+    public void setShowPercent(boolean isShowPercent) {
+        mIsShowPercent = isShowPercent;
+        invalidate();
+    }
+
 
 }
