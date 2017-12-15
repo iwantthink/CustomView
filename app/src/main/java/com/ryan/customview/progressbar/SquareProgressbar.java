@@ -43,9 +43,11 @@ public class SquareProgressbar extends View {
         super.onDraw(canvas);
         canvas.drawRect(mSquare.mLeft, mSquare.mTop,
                 mSquare.mRight, mSquare.mBottom, mPaint);
+        //利用canvas.rotate 画布的旋转 对整体的进行翻转
+//        canvas.rotate();
     }
 
     public void startRoll() {
-        
+
     }
 }

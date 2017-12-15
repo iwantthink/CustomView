@@ -39,7 +39,8 @@ public class SampleActivity extends AppCompatActivity {
 
     public void change_width(View view) {
 
-        mSeekBar.setRotation(45);
+        mSeekBar.setRotation(mSeekBar.getRotationX()+45);
+
 //        mRyanProgressbar.setBackgroundProgressColor(Color.YELLOW);
 //        mRyanProgressbar.setForegroundProgressColor(Color.GREEN);
 //        mRyanProgressbar.setForegroundCap(Paint.Cap.BUTT);
