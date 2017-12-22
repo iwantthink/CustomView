@@ -6,9 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/ll_content"
     tools:context="com.ryan.customview.SampleActivity">
 
     <com.ryan.customview.progressbar.RyanProgressbar
+
         android:id="@+id/ryan"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -27,10 +29,17 @@
         app:rpb_touchable="true"
         />
 
+    <com.ryan.customview.progressbar.SquareView
+        android:id="@+id/spb"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
+        android:visibility="gone"
+        />
+
     <com.ryan.customview.progressbar.SquareProgressbar
         android:layout_width="200dp"
-        android:layout_height="200dp"
-        />
+        android:layout_height="200dp"></com.ryan.customview.progressbar.SquareProgressbar>
 
     <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/pb_a"
